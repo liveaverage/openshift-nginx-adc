@@ -31,7 +31,7 @@ LABEL io.k8s.description="nginx [engine x] is an HTTP and reverse proxy server, 
 # Update image
 
 RUN yum update -y && \
-    yum -y clean all\
+    yum -y clean all &&\
     rm -rf /var/cache/yum 
 
 ## Install Nginx Plus
