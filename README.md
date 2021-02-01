@@ -53,6 +53,17 @@ The NGINX-Plus Software ADC image is the F5 base image for the NGINX Platform. N
 
 This should run on a properly subscribed Red Hat Enterprise Linux system (the container will assume the subscription from the OS)
 
+## License Agreement and Documentation
+
+Please find the documentation for NGINX Plus here:
+/usr/share/nginx/html/nginx-modules-reference.pdf
+
+NGINX Plus is proprietary software. EULA and License information:
+/usr/share/doc/nginx-plus/
+
+For support information, please see:
+'https://www.nginx.com/support/'
+
 ## Building the Dockerfile
 
 ```console
