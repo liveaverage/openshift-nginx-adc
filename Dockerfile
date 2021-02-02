@@ -9,19 +9,6 @@ ARG BASE_TAG=8.2
 # FROM statement must reference the base image using the three ARGs established
 FROM ${BASE_REGISTRY}/${BASE_IMAGE}:${BASE_TAG}
 
-# 'LABEL' instructions should include at least the following information and any other helpful details.
-# Labels consumed by Red Hat build service
-LABEL Component="nginx" \
-      Name="f5networks/nginx-plus-software-adc" \
-      Version="1.23.1" \
-      Release="1"
-
-# Labels could be consumed by OpenShift
-LABEL io.k8s.description="nginx [engine x] is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server, originally written by Igor Sysoev." \
-      io.k8s.display-name="nginx 1.23.1" \
-      io.openshift.expose-services="80:http" \
-      io.openshift.tags="nginx"
-
 # If installing packages via a 'yum install..', a 'yum/dnf clean all' is important to avoid unnecessary findings in the scans
 # Using --nogpgcheck is no longer allowed.  You should also not have to use --disablerepo or --enablerepo flags.  Note that if \
 # you are using a ubi base or ubi-derived image, only standard ubi repos are available.  Please visit \
