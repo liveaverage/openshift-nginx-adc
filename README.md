@@ -225,14 +225,14 @@ Server {
     #
     location = /dashboard.html {
          root /usr/share/nginx/html;
-         auth_basic           "Nginx Pluse Monitoring";
+         auth_basic           "Nginx Plus Monitoring";
          auth_basic_user_file /etc/nginx/.htpasswd;
     }
 }
 
 ```
 
-### Simple Loadbalancer Configuration
+### Simple Loadbalancer with ssl termination Configuration
 
 ```console
 
