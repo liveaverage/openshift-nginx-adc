@@ -21,7 +21,7 @@ NGINX Plus is a software load balancer, web server, and content cache built on t
  The NGINX-Plus platform can be deployed as a Virtual Machine, Container, Bare metal or as a cloud deployment.
 >                              [wikipedia.org/wiki/Nginx](https://en.wikipedia.org/wiki/Nginx)
 
-![logo](https://raw.githubusercontent.com/docker-library/docs/01c12653951b2fe592c1f93a13b4e289ada0e3a1/nginx/logo.png)
+!                 [logo](https://raw.githubusercontent.com/docker-library/docs/01c12653951b2fe592c1f93a13b4e289ada0e3a1/nginx/logo.png)
 
 ## File Structure
 
