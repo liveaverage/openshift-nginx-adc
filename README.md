@@ -252,7 +252,7 @@ server {
     ssl_certificate_key /etc/ssl/certs/server.key;
 
 location / {
-    proxy_pass http://dany-net;
+    proxy_pass http://any-net;
     health_check;
     }
 ```
