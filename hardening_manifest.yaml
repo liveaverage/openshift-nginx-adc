@@ -27,7 +27,7 @@ labels:
   # URL to find more information on the image
   org.opencontainers.image.url: "https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/"
   # Name of the distributing entity, organization or individual
-  org.opencontainers.image.vendor: "F5-NIGNX-Plus"
+  org.opencontainers.image.vendor: "f5-nginx"
   # Authoritative version of the software
   org.opencontainers.image.version: "1.23.1"
   # Keywords to help with search (ex. "cicd,gitops,golang")
@@ -54,5 +54,3 @@ maintainers:
   name: "Douglas Turner"
   # The gitlab username of the current container owner
   username: "dturnerf5com"
-  
-
