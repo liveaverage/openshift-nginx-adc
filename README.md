@@ -2,7 +2,7 @@
 
 NGINX Plus Docker image for RHEL 8
 
-## What is nginx-Plus
+## What is Nginx-Plus
 
 NGINX Plus is a software load balancer, web server, and content cache built on top of open source NGINX. NGINX Plus has exclusive enterprise‑grade features beyond what's available in the open source offering, including.
 
@@ -40,7 +40,9 @@ etc/
 
 ## How to use this image
 
-The NGINX-Plus Software ADC image is the F5 base image for the NGINX Platform. No configuration file are included. For how to configure the NGINX-Plus instance please see "https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/". For instuction on unpriveleged install see "https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/#unpriv_install".
+The NGINX-Plus Software ADC image is the F5 base image for the NGINX Platform. No configuration file are included. 
+- For instructions on how to configure the NGINX-Plus instance please see "https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/". 
+- For instructions on unprivileged install see "https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/#unpriv_install".
 
 ## Prerequisites
 
@@ -66,7 +68,7 @@ docker build -t nplus-adc-rhel:r.23.1 .
 
 ## Example Configurations
 
-> Custom configurations are placed in the etc/nginx/conf.d directory. Inital build of the container a default.conf file will be created. If using custom configurations the default can be deleted or prior to build the following lines can added to the Dockerfile to remove the default.conf and copy all custom configuration to the /etc/nginx/conf.d directory
+> Custom configurations are placed in the /etc/nginx/conf.d directory. During the initial build of the container a default.conf file will be created. If using custom configurations the default.conf can be deleted or prior to building the container image the following lines can added to the Dockerfile to remove the default.conf and copy all custom configuration to the /etc/nginx/conf.d directory
 
 ```console
 
@@ -246,7 +248,7 @@ upstream any-net {
 
 server {
     listen	443 ssl;
-    server_name d-net.com;
+    server_name any-net.com;
 
     ssl_certificate	/etc/ssl/certs/server.crt;
     ssl_certificate_key /etc/ssl/certs/server.key;
