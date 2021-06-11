@@ -1,5 +1,15 @@
 # NGINX-Plus-Software-ADC
 
+## Software Trial and Registration
+
+This software is made available for you at no cost for 60 days.  After that time you are expected to register this software and work with an NGINX Sales representative for ongoing demo licenses or software and support acquisition.
+
+## Register for a Free Gift, Training and Deployment Guides
+
+Register at:  [NGINX Registration Page](https://carah.io/nginxregistration)
+
+Alternatively contact F5 Federal Sales at:  [nginx-federal@f5.com](nginx-federal@f5.com) 
+
 NGINX Plus Docker image for RHEL 8
 
 ## What is Nginx-Plus
