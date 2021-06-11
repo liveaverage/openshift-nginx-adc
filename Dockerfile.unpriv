@@ -1,0 +1,68 @@
+# syntax = docker/dockerfile:1.0-experimental
+ARG UBI_VERSION=8
+FROM registry.access.redhat.com/ubi${UBI_VERSION}/ubi
+ARG UBI_VERSION=8
+ARG INSTALL_PATH=/opt/nginx
+ARG HTTP_PORT=8080
+LABEL maintainer="James Jones <jam.jones@f5.com>"
+#Install Prerequisites
+RUN yum update --disableplugin=subscription-manager -y
+RUN yum install --disableplugin=subscription-manager -y ca-certificates wget cpio
+# Add User
+RUN useradd -ms /bin/sh -d ${INSTALL_PATH} nginx
+RUN mkdir -p ${INSTALL_PATH}
+RUN chown nginx.nginx ${INSTALL_PATH}
+# Switch to User
+USER nginx
+WORKDIR ${INSTALL_PATH}
+# Copy over repo certs
+RUN mkdir ${INSTALL_PATH}/ssl
+COPY ./nginx-repo.crt ${INSTALL_PATH}/ssl/
+COPY ./nginx-repo.key ${INSTALL_PATH}/ssl/
+#Get NGINX Plus and njs mod
+RUN wget --certificate=${INSTALL_PATH}/ssl/nginx-repo.crt --private-key=${INSTALL_PATH}/ssl/nginx-repo.key \
+    https://plus-pkgs.nginx.com/centos/${UBI_VERSION}/x86_64/RPMS/nginx-plus-23-1.el${UBI_VERSION}.ngx.x86_64.rpm
+RUN wget --certificate=${INSTALL_PATH}/ssl/nginx-repo.crt --private-key=${INSTALL_PATH}/ssl/nginx-repo.key \
+    https://plus-pkgs.nginx.com/centos/${UBI_VERSION}/x86_64/RPMS/nginx-plus-module-njs-23+0.5.0-1.el${UBI_VERSION}.ngx.x86_64.rpm
+RUN rpm2cpio nginx-plus-23-1.el${UBI_VERSION}.ngx.x86_64.rpm > nginx.cpio
+RUN cpio -id < nginx.cpio
+RUN rpm2cpio nginx-plus-module-njs-23+0.5.0-1.el${UBI_VERSION}.ngx.x86_64.rpm > nginx-njs.cpio
+RUN cpio -id < nginx-njs.cpio
+RUN rm *.rpm && rm *.cpio
+#Clean Up Configs and Modules
+RUN  sed -i "s|\([ ^t]*access_log[ ^t]*\)/|\1${INSTALL_PATH}/|" ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|\([ ^t]*error_log[ ^t]*\)/|\1${INSTALL_PATH}/|" ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|\([ ^t]*pid[ ^t]*\)/|\1${INSTALL_PATH}/|" ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|\([ ^t]*include[ ^t]*\)/|\1${INSTALL_PATH}/|" ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|\([ ^t]*root[ ^t]*\)/|\1${INSTALL_PATH}/|" ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|\([ ^t]*user[ ^t]*\)nginx;||" ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|http {|http {\n    client_body_temp_path ${INSTALL_PATH}/var/cache/nginx/client_temp;|" \
+      ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|http {|http {\n    proxy_temp_path       ${INSTALL_PATH}/var/cache/nginx/proxy_temp_path;|" \
+      ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|http {|http {\n    fastcgi_temp_path     ${INSTALL_PATH}/var/cache/nginx/fastcgi_temp;|" \
+      ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|http {|http {\n    uwsgi_temp_path       ${INSTALL_PATH}/var/cache/nginx/uwsgi_temp;|" \
+      ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|http {|http {\n    scgi_temp_path        ${INSTALL_PATH}/var/cache/nginx/scgi_temp;|" \
+      ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i "s|\([ ^t]*access_log[ ^t]*\)/|\1${INSTALL_PATH}/|" ${INSTALL_PATH}/etc/nginx/conf.d/default.conf &&\
+  sed -i "s|\([ ^t]*root[ ^t]*\)/|\1${INSTALL_PATH}/|" ${INSTALL_PATH}/etc/nginx/conf.d/default.conf &&\
+  sed -i "s|\([ ^t]*listen[ ^t]*\)80|\1${HTTP_PORT}|" ${INSTALL_PATH}/etc/nginx/conf.d/default.conf &&\
+  mkdir -p ${INSTALL_PATH}/var/run &&\
+  mkdir -p ${INSTALL_PATH}/var/log/nginx &&\
+  mkdir -p ${INSTALL_PATH}/var/cache/nginx &&\
+  sed -i '1iload_module modules/ngx_http_js_module.so;' ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  sed -i '1iload_module modules/ngx_stream_js_module.so;' ${INSTALL_PATH}/etc/nginx/nginx.conf &&\
+  [ -d ${INSTALL_PATH}/etc/logrotate.d ] && rm -rf ${INSTALL_PATH}/etc/logrotate.d &&\
+  cd ${INSTALL_PATH}/etc/nginx &&\
+  ln -sfn ../../usr/lib*/nginx/modules modules
+  
+# Forward request logs to Docker log collector
+RUN ln -sf /dev/stdout /opt/nginx/var/log/nginx/access.log \
+  && ln -sf /dev/stderr /opt/nginx/var/log/nginx/error.log
+#Remove Repo Certs
+RUN rm -rf /opt/nginx/ssl
+EXPOSE ${HTTP_PORT}
+STOPSIGNAL SIGTERM
+CMD ["/opt/nginx/usr/sbin/nginx","-p", "/opt/nginx/etc/nginx","-e", "/opt/nginx/var/log/nginx/error.log","-c", "/opt/nginx/etc/nginx/nginx.conf","-g", "daemon off;"]
