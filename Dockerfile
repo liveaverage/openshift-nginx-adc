@@ -2,13 +2,32 @@
 # '--build-arg' when building locally to replace these values
 # If your container is not based on either the ubi7/ubi8 Iron Bank images, then it should be based on a different Iron Bank image
 # Note that you will not be able to pull containers from nexus-docker-secure.levelup-dev.io into your local dev machine 
-ARG BASE_REGISTRY=registry1.dsop.io
-ARG BASE_IMAGE=redhat/ubi/ubi8
-ARG BASE_TAG=8.2
+ARG BASE_REGISTRY=registry1.dsop.mil
+ARG BASE_IMAGE=ironbank/redhat/ubi/ubi8
+ARG BASE_TAG=8.4
 
 # FROM statement must reference the base image using the three ARGs established
 FROM ${BASE_REGISTRY}/${BASE_IMAGE}:${BASE_TAG}
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+# 'LABEL' instructions should include at least the following information and any other helpful details.
+# Labels consumed by Red Hat build service
+LABEL Component="nginx" \
+      Name="f5networks/nginx-plus-software-adc" \
+      Version="1.23.1" \
+      Release="1"
+
+# Labels could be consumed by OpenShift
+LABEL io.k8s.description="nginx [engine x] is an HTTP and reverse proxy server, a mail proxy server, and a generic TCP/UDP proxy server, originally written by Igor Sysoev." \
+      io.k8s.display-name="nginx 1.23.1" \
+      io.openshift.expose-services="80:http" \
+      io.openshift.tags="nginx"
+
+=======
+>>>>>>> 34b01ece5307b00de97c40ef4f0c3addb9044f4e
+=======
+>>>>>>> bfeadbcd36b34d12884a19ce81b8b8b8771689b2
 # If installing packages via a 'yum install..', a 'yum/dnf clean all' is important to avoid unnecessary findings in the scans
 # Using --nogpgcheck is no longer allowed.  You should also not have to use --disablerepo or --enablerepo flags.  Note that if \
 # you are using a ubi base or ubi-derived image, only standard ubi repos are available.  Please visit \
@@ -18,7 +37,15 @@ FROM ${BASE_REGISTRY}/${BASE_IMAGE}:${BASE_TAG}
 # Update image
 
 RUN yum update -y && \
+<<<<<<< HEAD
+<<<<<<< HEAD
+    yum -y clean all\
+=======
     yum -y clean all &&\
+>>>>>>> 34b01ece5307b00de97c40ef4f0c3addb9044f4e
+=======
+    yum -y clean all &&\
+>>>>>>> bfeadbcd36b34d12884a19ce81b8b8b8771689b2
     rm -rf /var/cache/yum 
 
 ## Install Nginx Plus
@@ -36,7 +63,15 @@ RUN yum install -y ca-certificates openssl && \
 
 # Optional: COPY over any of your SSL certs in /etc/ssl for HTTPS servers
 # e.g.
+<<<<<<< HEAD
+<<<<<<< HEAD
+COPY etc/ssl   /etc/ssl
+=======
 # COPY etc/ssl   /etc/ssl
+>>>>>>> 34b01ece5307b00de97c40ef4f0c3addb9044f4e
+=======
+# COPY etc/ssl   /etc/ssl
+>>>>>>> bfeadbcd36b34d12884a19ce81b8b8b8771689b2
 
 # COPY /etc/nginx (Nginx configuration) directory
 COPY etc/nginx /etc/nginx
@@ -52,6 +87,6 @@ RUN nginx -t && \
     nginx -T
 
 # EXPOSE ports, HTTP 80, HTTPS 443 and, Nginx status page 8080
-EXPOSE 80 443 8080
+EXPOSE 8080
 STOPSIGNAL SIGTERM
 HEALTHCHECK --timeout=30s CMD ["nginx", "-g", "daemon off;"]

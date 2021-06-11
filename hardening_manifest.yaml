@@ -14,7 +14,7 @@ tags:
 # Build args passed to Dockerfile ARGs
 args:
   BASE_IMAGE: "redhat/ubi/ubi8"
-  BASE_TAG: "8.3"
+  BASE_TAG: "8.4"
 
 # Docker image labels
 labels:
@@ -27,7 +27,7 @@ labels:
   # URL to find more information on the image
   org.opencontainers.image.url: "https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/"
   # Name of the distributing entity, organization or individual
-  org.opencontainers.image.vendor: "f5-nginx"
+  org.opencontainers.image.vendor: "F5-NIGNX-Plus"
   # Authoritative version of the software
   org.opencontainers.image.version: "1.23.1"
   # Keywords to help with search (ex. "cicd,gitops,golang")
