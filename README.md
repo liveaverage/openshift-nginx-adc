@@ -1,8 +1,18 @@
 # NGINX-Plus-Software-ADC
 
+## Software Trial and Registration
+
+This software is made available for you at no cost for 60 days.  After that time you are expected to register this software and work with an NGINX Sales representative for ongoing demo licenses or software and support acquisition.
+
+## Register for a Free Gift, Training and Deployment Guides
+
+Register at:  [NGINX Registration Page](https://carah.io/nginxregistration)
+
+Alternatively contact F5 Federal Sales at:  [nginx-federal@f5.com](nginx-federal@f5.com) 
+
 NGINX Plus Docker image for RHEL 8
 
-## What is Nginx-Plus
+## What is NGINX-Plus
 
 NGINX Plus is a software load balancer, web server, and content cache built on top of open source NGINX. NGINX Plus has exclusive enterprise‑grade features beyond what's available in the open source offering, including.
 
@@ -27,26 +37,27 @@ NGINX Plus is a software load balancer, web server, and content cache built on t
 
 To achieve this separation, we create a configuration layout that supports a multi‑purpose NGINX Plus instance and provides a convenient structure for automating configuration deployment through CI/CD pipelines. The resulting directory structure under `/etc/nginx` looks like this:
 
-```
+```console
 etc/
 ├── nginx/
-│    ├── conf.d/……………………………………………………………… Subdirectory for other HTTP configurations (Web │server, load balancing, etc.)
-│    │   └── default.conf ………………… Default configuration file
-│    └── nginx.conf …………………………………………………………… Main NGINX configuration file
+│    ├── conf.d/ ....................... Subdirectory for other HTTP configurations (Web │server, load balancing, etc.)
+│    │   └── default.conf .............. Default configuration file
+│    └── nginx.conf .................... Main NGINX configuration file
 └── ssl/
-    └── nginx/ …………………………………………………………… NGINX Plus repo.crt and repo.key goes here
+    └── nginx/ ......................... NGINX Plus repo.crt and repo.key goes here
 
 ```
 
 ## How to use this image
 
-The NGINX-Plus Software ADC image is the F5 base image for the NGINX Platform. No configuration file are included. 
-- For instructions on how to configure the NGINX-Plus instance please see "https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/". 
-- For instructions on unprivileged install see "https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/#unpriv_install".
+The NGINX-Plus Software ADC image is the F5 base image for the NGINX Platform. No configuration files are included.
+
+- For how to configure the NGINX-Plus instance please see https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/.
+- For instructions on unprivileged install see https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-plus/#unpriv_install.
 
 ## Prerequisites
 
-This should run on a properly subscribed Red Hat Enterprise Linux system (the container will assume the subscription from the OS)
+This Container image should be run on a properly subscribed Red Hat Enterprise Linux system (the container will assume the subscription from the OS)
 
 ## License Agreement and Documentation
 
@@ -62,13 +73,23 @@ For support information, please see:
 ### Building the Dockerfile
 
 ```console
-docker build -t nplus-adc-rhel:r.23.1 .
+docker build -t nplus-adc-ubi:r.24.2 .
 
+```
+
+### Running the Image
+
+```console
+# Run with the default NGINX sample page:
+docker run --name nginx -p 8080:8080 --rm -it nplus-adc-ubi:r.24.2
+
+# Run with volume mount overriding default NGINX sample page:
+docker run --name nginx -p 8080:8080 --rm -v `pwd`/example:/usr/share/nginx/html -it nplus-adc-ubi:r.24.2
 ```
 
 ## Example Configurations
 
-> Custom configurations are placed in the /etc/nginx/conf.d directory. During the initial build of the container a default.conf file will be created. If using custom configurations the default.conf can be deleted or prior to building the container image the following lines can added to the Dockerfile to remove the default.conf and copy all custom configuration to the /etc/nginx/conf.d directory
+> Custom configurations are placed in the /etc/nginx/conf.d directory. During Initial build of the container a default.conf file will be created. If using custom configurations the default.conf can be deleted or prior to building the container the following lines can added to the Dockerfile to remove the default.conf and copy all custom configuration to the /etc/nginx/conf.d directory
 
 ```console
 
@@ -109,7 +130,7 @@ http {
   server_names_hash_bucket_size 128; # this seems to be required for some vhosts
 
   server { # php/fastcgi
-    listen       80;
+    listen       8080;
     server_name  domain1.com www.domain1.com;
     access_log   logs/domain1.access.log  main;
     root         html;
@@ -163,8 +184,8 @@ http {
 
 Server {
 
-    #listen       80 default_server;
-    listen       443 ssl;
+    #listen       8080 default_server;
+    listen       8443 ssl;
 
     server_name  localhost;
      
@@ -227,14 +248,14 @@ Server {
     #
     location = /dashboard.html {
          root /usr/share/nginx/html;
-         auth_basic           "Nginx Plus Monitoring";
+         auth_basic           "Nginx Pluse Monitoring";
          auth_basic_user_file /etc/nginx/.htpasswd;
     }
 }
 
 ```
 
-### Simple Loadbalancer with ssl termination Configuration
+### Simple Loadbalancer Configuration
 
 ```console
 
@@ -247,10 +268,10 @@ upstream any-net {
 }
 
 server {
-    listen	443 ssl;
+    listen 443 ssl;
     server_name any-net.com;
 
-    ssl_certificate	/etc/ssl/certs/server.crt;
+    ssl_certificate /etc/ssl/certs/server.crt;
     ssl_certificate_key /etc/ssl/certs/server.key;
 
 location / {

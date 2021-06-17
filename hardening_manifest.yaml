@@ -8,12 +8,12 @@ name: "f5-networks/nginx-plus-software-adc"
 # The most specific version should be the first tag and will be shown
 # on ironbank.dso.mil
 tags:
-- "1.23.1"
-- "latest"
+  - "1.24.2"
+  - "latest"
 
 # Build args passed to Dockerfile ARGs
 args:
-  BASE_IMAGE: "ironbank/redhat/ubi/ubi8"
+  BASE_IMAGE: "redhat/ubi/ubi8-minimal"
   BASE_TAG: "8.4"
 
 # Docker image labels
@@ -29,7 +29,7 @@ labels:
   # Name of the distributing entity, organization or individual
   org.opencontainers.image.vendor: "F5-NIGNX-Plus"
   # Authoritative version of the software
-  org.opencontainers.image.version: "1.23.1"
+  org.opencontainers.image.version: "1.24.2"
   # Keywords to help with search (ex. "cicd,gitops,golang")
   mil.dso.ironbank.image.keywords: "k8s,sw,adc"
   # This value can be "opensource" or "commercial"
@@ -44,13 +44,13 @@ labels:
 #    validation:
 #      type: "sha256" # supported: sha256, sha512
 #      value: "3d6b4cfca92067edd5c860c212ff5153d1e162b8791408bc671900309eb555ec" # must be lowercase
-    # if the file you pull is from a github repo, make sure this is the official repo for that file,
-    # and indicate that in a comment in this file
+# if the file you pull is from a github repo, make sure this is the official repo for that file,
+# and indicate that in a comment in this file
 
 # List of project maintainers
 maintainers:
-- email: "d.turner@f5.com"
-  # The name of the current container owner
-  name: "Douglas Turner"
-  # The gitlab username of the current container owner
-  username: "dturnerf5com"
+  - email: "nginx-Federal-Ironbank@f5.com"
+    # The name of the current container owner
+    name: "NGINX Federal Ironbank Team"
+    # The gitlab username of the current container owner
+    username: "jrmorgan"
