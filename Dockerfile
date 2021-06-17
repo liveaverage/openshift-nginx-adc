@@ -2,14 +2,17 @@
 # '--build-arg' when building locally to replace these values
 # If your container is not based on either the ubi7/ubi8 Iron Bank images, then it should be based on a different Iron Bank image
 # Note that you will not be able to pull containers from nexus-docker-secure.levelup-dev.io into your local dev machine 
-ARG BASE_REGISTRY=registry1.dsop.mil
-ARG BASE_IMAGE=ironbank/redhat/ubi/ubi8
+ARG BASE_REGISTRY=registry1.dso.mil
+ARG BASE_IMAGE=ironbank/redhat/ubi/ubi8-minimal
 ARG BASE_TAG=8.4
 
 # FROM statement must reference the base image using the three ARGs established
 FROM ${BASE_REGISTRY}/${BASE_IMAGE}:${BASE_TAG}
 
-# If installing packages via a 'yum install..', a 'yum/dnf clean all' is important to avoid unnecessary findings in the scans
+ARG UID=101
+ARG GID=101
+
+# If installing packages via a 'microdnf install..', a 'yum/dnf clean all' is important to avoid unnecessary findings in the scans
 # Using --nogpgcheck is no longer allowed.  You should also not have to use --disablerepo or --enablerepo flags.  Note that if \
 # you are using a ubi base or ubi-derived image, only standard ubi repos are available.  Please visit \
 # https://repo1.dsop.io/dsop/redhat/ubi/ubi8/-/blob/development/ironbank.repo for more information.  Contact us if you have \
@@ -17,21 +20,21 @@ FROM ${BASE_REGISTRY}/${BASE_IMAGE}:${BASE_TAG}
 
 # Update image
 
-RUN yum update -y && \
-    yum -y clean all &&\
+RUN microdnf update -y && \
+    microdnf -y clean all &&\
     rm -rf /var/cache/yum 
 
 ## Install Nginx Plus
 # New Line 41 to be added path to the NGINX off-line repo (wget -P /etc/yum.repos.d /nginx-repo/nginx-plus-23-1.el8.ngx.x86_64.rpm && \)
 COPY nginx-repo /etc/yum.repos.d
 
-RUN yum install -y ca-certificates openssl && \
-    rpm -ihv /etc/yum.repos.d/nginx-plus-23-1.el8.ngx.x86_64.rpm && \
+RUN microdnf install -y shadow-utils systemd ca-certificates openssl && \
+    rpm -ivh /etc/yum.repos.d/nginx-plus-24-2.el8.ngx.x86_64.rpm && \
     ## Optional: Install NGINX Plus Modules from repo
     # See https://www.nginx.com/products/nginx/modules
-    #yum install -y --disableplugin=subscription-manager nginx-plus-module-modsecurity && \
-    #yum install -y --disableplugin=subscription-manager nginx-plus-module-geoip && \
-    #yum install -y --disableplugin=subscription-manager nginx-plus-module-njs && \
+    #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-modsecurity && \
+    #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-geoip && \
+    #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-njs && \
     rm -rf /var/cache/yum
 
 # Optional: COPY over any of your SSL certs in /etc/ssl for HTTPS servers
@@ -41,6 +44,19 @@ RUN yum install -y ca-certificates openssl && \
 # COPY /etc/nginx (Nginx configuration) directory
 COPY etc/nginx /etc/nginx
 
+# implement changes required to run NGINX as an unprivileged user
+RUN sed -i 's,listen.*80,listen       8080,' /etc/nginx/conf.d/default.conf \
+    && sed -i '/user  nginx;/d' /etc/nginx/nginx.conf \
+    && sed -i 's,/var/run/nginx.pid,/tmp/nginx.pid,' /etc/nginx/nginx.conf \
+    && sed -i "/^http {/a \    proxy_temp_path /tmp/proxy_temp;\n    client_body_temp_path /tmp/client_temp;\n    fastcgi_temp_path /tmp/fastcgi_temp;\n    uwsgi_temp_path /tmp/uwsgi_temp;\n    scgi_temp_path /tmp/scgi_temp;\n" /etc/nginx/nginx.conf \
+# nginx user must own the cache and etc directory to write cache and tweak the nginx config
+    && chown -R $UID:0 /var/cache/nginx \
+    && chmod -R g+w /var/cache/nginx \
+    && chown -R $UID:0 /etc/nginx \
+    && chmod -R g+w /etc/nginx \
+# clear yum cache
+    && rm -rf /var/cache/yum 
+
 # Check imported NGINX config
 RUN nginx -t && \
     # Forward request logs to docker log collector
@@ -49,9 +65,13 @@ RUN nginx -t && \
     # ln -sf /dev/stdout /var/log/nginx/stream.log \
     # **Remove the Nginx Plus cert/keys from the image**
     # rm /etc/ssl/nginx/nginx-repo.crt /etc/ssl/nginx/nginx-repo.key
-    nginx -T
+    nginx -T && \
+    chown -R $UID:0 /tmp/nginx.pid
 
-# EXPOSE ports, HTTP 80, HTTPS 443 and, Nginx status page 8080
-# EXPOSE 80 443 8080
-STOPSIGNAL SIGTERM
-HEALTHCHECK --timeout=30s CMD ["nginx", "-g", "daemon off;"]
+EXPOSE 8080
+
+STOPSIGNAL SIGQUIT
+
+USER $UID
+
+CMD ["nginx", "-g", "daemon off;"]
