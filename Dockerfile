@@ -2,9 +2,9 @@
 # '--build-arg' when building locally to replace these values
 # If your container is not based on either the ubi7/ubi8 Iron Bank images, then it should be based on a different Iron Bank image
 # Note that you will not be able to pull containers from nexus-docker-secure.levelup-dev.io into your local dev machine 
-ARG BASE_REGISTRY=registry1.dsop.io
-ARG BASE_IMAGE=redhat/ubi/ubi8
-ARG BASE_TAG=8.2
+ARG BASE_REGISTRY=registry1.dsop.mil
+ARG BASE_IMAGE=ironbank/redhat/ubi/ubi8
+ARG BASE_TAG=8.4
 
 # FROM statement must reference the base image using the three ARGs established
 FROM ${BASE_REGISTRY}/${BASE_IMAGE}:${BASE_TAG}
@@ -52,6 +52,6 @@ RUN nginx -t && \
     nginx -T
 
 # EXPOSE ports, HTTP 80, HTTPS 443 and, Nginx status page 8080
-EXPOSE 80 443 8080
+# EXPOSE 80 443 8080
 STOPSIGNAL SIGTERM
 HEALTHCHECK --timeout=30s CMD ["nginx", "-g", "daemon off;"]
