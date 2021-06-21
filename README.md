@@ -141,7 +141,7 @@ http {
   }
 
   server { # simple reverse-proxy
-    listen       80;
+    listen       8080;
     server_name  domain2.com www.domain2.com;
     access_log   logs/domain2.access.log  main;
 
@@ -166,7 +166,7 @@ http {
  
     # simple load balancing
   server { 
-    listen          80;
+    listen          8080;
     server_name     big.server.com;
     access_log      logs/big.server.access.log main;
 
@@ -268,7 +268,7 @@ upstream any-net {
 }
 
 server {
-    listen 443 ssl;
+    listen 8443 ssl;
     server_name any-net.com;
 
     ssl_certificate /etc/ssl/certs/server.crt;
