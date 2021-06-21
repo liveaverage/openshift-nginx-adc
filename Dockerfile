@@ -20,22 +20,28 @@ ARG GID=101
 
 # Update image
 
-RUN microdnf update -y && \
-    microdnf -y clean all &&\
-    rm -rf /var/cache/yum 
+RUN microdnf -y clean all \
+    && microdnf -y update --nodocs \
+    && microdnf -y clean all \
+    && rm -rf /var/cache/yum 
 
 ## Install Nginx Plus
 # New Line 41 to be added path to the NGINX off-line repo (wget -P /etc/yum.repos.d /nginx-repo/nginx-plus-23-1.el8.ngx.x86_64.rpm && \)
 COPY nginx-repo /etc/yum.repos.d
 
-RUN microdnf install -y shadow-utils systemd ca-certificates openssl && \
-    rpm -ivh /etc/yum.repos.d/nginx-plus-24-2.el8.ngx.x86_64.rpm && \
+RUN microdnf install -y shadow-utils systemd ca-certificates openssl \
+    && rpm -ivh /etc/yum.repos.d/nginx-plus-24-2.el8.ngx.x86_64.rpm \
     ## Optional: Install NGINX Plus Modules from repo
     # See https://www.nginx.com/products/nginx/modules
     #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-modsecurity && \
     #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-geoip && \
     #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-njs && \
-    rm -rf /var/cache/yum
+    && microdnf -y clean all \
+    && rm -rf /var/cache/yum
+
+# Cleanup image
+RUN rpm -e --nodeps `rpm -qa | grep systemd` \
+    && rpm -e --nodeps `rpm -qa | grep dbus`
 
 # Optional: COPY over any of your SSL certs in /etc/ssl for HTTPS servers
 # e.g.
@@ -53,25 +59,26 @@ RUN sed -i 's,listen.*80,listen       8080,' /etc/nginx/conf.d/default.conf \
     && chown -R $UID:0 /var/cache/nginx \
     && chmod -R g+w /var/cache/nginx \
     && chown -R $UID:0 /etc/nginx \
-    && chmod -R g+w /etc/nginx \
-# clear yum cache
-    && rm -rf /var/cache/yum 
+    && chmod -R g+w /etc/nginx
+
 
 # Check imported NGINX config
-RUN nginx -t && \
+RUN nginx -t \
     # Forward request logs to docker log collector
-    ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log && \
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log \
     # ln -sf /dev/stdout /var/log/nginx/stream.log \
     # **Remove the Nginx Plus cert/keys from the image**
     # rm /etc/ssl/nginx/nginx-repo.crt /etc/ssl/nginx/nginx-repo.key
-    nginx -T && \
-    chown -R $UID:0 /tmp/nginx.pid
+    && nginx -T \
+    && chown -R $UID:0 /tmp/nginx.pid
 
 EXPOSE 8080
 
 STOPSIGNAL SIGQUIT
 
 USER $UID
+
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 CMD curl -f localhost:8080 || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]
