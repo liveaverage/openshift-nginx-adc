@@ -2,3 +2,4 @@
 nginx-repo.*
 example/
 Dockerfile-*
+.Dockerfile*
