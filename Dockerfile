@@ -23,14 +23,16 @@ ARG GID=101
 RUN microdnf -y clean all \
     && microdnf -y update --nodocs \
     && microdnf -y clean all \
-    && rm -rf /var/cache/yum 
+    && rm -rf /var/cache/yum \
+    && mkdir /tmp/pkgs
 
 ## Install Nginx Plus
 # New Line 41 to be added path to the NGINX off-line repo (wget -P /etc/yum.repos.d /nginx-repo/nginx-plus-23-1.el8.ngx.x86_64.rpm && \)
-COPY nginx-repo /etc/yum.repos.d
+COPY nginx-repo /tmp/pkgs
 
-RUN microdnf install -y shadow-utils openssl \
-    && rpm -ivh --nodeps /etc/yum.repos.d/nginx-plus-24-2.el8.ngx.x86_64.rpm \
+RUN rpm -ivh --nodeps /tmp/pkgs/openssl-*.rpm \
+    && microdnf install -y shadow-utils \
+    && rpm -ivh --nodeps /tmp/pkgs/nginx-plus-*.rpm \
     ## Optional: Install NGINX Plus Modules from repo
     # See https://www.nginx.com/products/nginx/modules
     #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-modsecurity && \
@@ -39,7 +41,8 @@ RUN microdnf install -y shadow-utils openssl \
     && rpm -e --nodeps `rpm -qa | grep shadow-utils` \
     && rpm -e --nodeps `rpm -qa | grep libsemanage` \
     && microdnf -y clean all \
-    && rm -rf /var/cache/yum
+    && rm -rf /var/cache/yum \
+    && rm -rf /tmp/pkgs
 
 # Optional: COPY over any of your SSL certs in /etc/ssl for HTTPS servers
 # e.g.
