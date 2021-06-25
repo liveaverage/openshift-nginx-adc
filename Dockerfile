@@ -29,19 +29,17 @@ RUN microdnf -y clean all \
 # New Line 41 to be added path to the NGINX off-line repo (wget -P /etc/yum.repos.d /nginx-repo/nginx-plus-23-1.el8.ngx.x86_64.rpm && \)
 COPY nginx-repo /etc/yum.repos.d
 
-RUN microdnf install -y shadow-utils systemd ca-certificates openssl \
-    && rpm -ivh /etc/yum.repos.d/nginx-plus-24-2.el8.ngx.x86_64.rpm \
+RUN microdnf install -y shadow-utils openssl \
+    && rpm -ivh --nodeps /etc/yum.repos.d/nginx-plus-24-2.el8.ngx.x86_64.rpm \
     ## Optional: Install NGINX Plus Modules from repo
     # See https://www.nginx.com/products/nginx/modules
     #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-modsecurity && \
     #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-geoip && \
     #microdnf install -y --disableplugin=subscription-manager nginx-plus-module-njs && \
+    && rpm -e --nodeps `rpm -qa | grep shadow-utils` \
+    && rpm -e --nodeps `rpm -qa | grep libsemanage` \
     && microdnf -y clean all \
     && rm -rf /var/cache/yum
-
-# Cleanup image
-RUN rpm -e --nodeps `rpm -qa | grep systemd` \
-    && rpm -e --nodeps `rpm -qa | grep dbus`
 
 # Optional: COPY over any of your SSL certs in /etc/ssl for HTTPS servers
 # e.g.
