@@ -38,14 +38,13 @@ labels:
   mil.dso.ironbank.product.name: "f5-networks/nginx-plus-software-adc"
 
 # List of resources to make available to the offline build context
-#resources:
-#  - url: "wget https://raw.githubusercontent.com/nginxinc/nginx-plus-install-tools/main/ngxunprivinst.sh"
-#    filename: "ngxunprivinst.sh" # [required field] desired staging name for the build context
-#    validation:
-#      type: "sha256" # supported: sha256, sha512
-#      value: "3d6b4cfca92067edd5c860c212ff5153d1e162b8791408bc671900309eb555ec" # must be lowercase
-# if the file you pull is from a github repo, make sure this is the official repo for that file,
-# and indicate that in a comment in this file
+resources:
+ - url: "http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/Packages/openssl-1.1.1k-1.el8.x86_64.rpm"
+   filename: "openssl-1.1.1k-1.el8.x86_64.rpm" # [required field] desired staging name for the build context
+   validation:
+     type: "sha256" # supported: sha256, sha512
+     value: "30238acdfcbca8c0d0b4adca297aa6be0b05953f23093229fcc612a365c2c7fb" # must be lowercase
+
 
 # List of project maintainers
 maintainers:
