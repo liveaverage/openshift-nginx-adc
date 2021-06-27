@@ -30,6 +30,10 @@ RUN microdnf -y clean all \
 # New Line 41 to be added path to the NGINX off-line repo (wget -P /etc/yum.repos.d /nginx-repo/nginx-plus-23-1.el8.ngx.x86_64.rpm && \)
 COPY nginx-repo /tmp/pkgs
 
+ARG IMPORTANT_DEPENDENCY=openssl-1.1.1k-1.el8.x86_64.rpm
+COPY ["${IMPORTANT_DEPENDENCY}", "/tmp/pkgs"]
+
+
 RUN rpm -ivh --nodeps /tmp/pkgs/openssl-*.rpm \
     && microdnf install -y shadow-utils \
     && rpm -ivh --nodeps /tmp/pkgs/nginx-plus-*.rpm \
