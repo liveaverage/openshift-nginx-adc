@@ -1,0 +1,6 @@
+.DS_Store
+nginx-repo.*
+example/
+Dockerfile-*
+.Dockerfile*
+nginx-repo/openssl*
