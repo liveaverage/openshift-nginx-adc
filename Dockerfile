@@ -76,7 +76,8 @@ RUN nginx -t \
     # **Remove the Nginx Plus cert/keys from the image**
     # rm /etc/ssl/nginx/nginx-repo.crt /etc/ssl/nginx/nginx-repo.key
     && nginx -T \
-    && chown -R $UID:0 /tmp/nginx.pid
+    && chown -R $UID:0 /tmp/nginx.pid \
+    && chmod -R ugo+rwx /tmp/nginx.pid
 
 EXPOSE 8080
 
