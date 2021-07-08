@@ -67,7 +67,7 @@ RUN sed -i 's,listen.*80,listen       8080,' /etc/nginx/conf.d/default.conf \
     && chmod -R g+w /etc/nginx
 
 
-# Check imported NGINX config
+# Check imported NGINX config and set permissions and ownership
 RUN nginx -t \
     # Forward request logs to docker log collector
     && ln -sf /dev/stdout /var/log/nginx/access.log \
