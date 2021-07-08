@@ -67,7 +67,7 @@ RUN sed -i 's,listen.*80,listen       8080,' /etc/nginx/conf.d/default.conf \
     && chmod -R g+w /etc/nginx
 
 
-# Check imported NGINX config
+# Check imported NGINX config and set permissions and ownership
 RUN nginx -t \
     # Forward request logs to docker log collector
     && ln -sf /dev/stdout /var/log/nginx/access.log \
@@ -76,7 +76,8 @@ RUN nginx -t \
     # **Remove the Nginx Plus cert/keys from the image**
     # rm /etc/ssl/nginx/nginx-repo.crt /etc/ssl/nginx/nginx-repo.key
     && nginx -T \
-    && chown -R $UID:0 /tmp/nginx.pid
+    && chown -R $UID:0 /tmp/nginx.pid \
+    && chmod -R ugo+rwx /tmp/nginx.pid
 
 EXPOSE 8080
 
