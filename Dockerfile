@@ -35,8 +35,7 @@ COPY nginx-repo /tmp/pkgs
 #COPY ["${IMPORTANT_DEPENDENCY}", "/tmp/pkgs"]
 
 
-RUN rpm -ivh --nodeps /tmp/pkgs/openssl-*.rpm \
-    && microdnf install -y shadow-utils tar gzip \
+RUN microdnf install -y shadow-utils tar gzip \
     && rpm -ivh --nodeps /tmp/pkgs/nginx-plus-*.rpm \
     ## Optional: Install NGINX Plus Modules from repo
     # See https://www.nginx.com/products/nginx/modules
