@@ -3,7 +3,7 @@
 # If your container is not based on either the ubi7/ubi8 Iron Bank images, then it should be based on a different Iron Bank image
 # Note that you will not be able to pull containers from nexus-docker-secure.levelup-dev.io into your local dev machine 
 ARG BASE_REGISTRY=registry.access.redhat.com
-ARG BASE_IMAGE=redhat/ubi/ubi8-minimal
+ARG BASE_IMAGE=ubi8/ubi-minimal
 ARG BASE_TAG=8.4
 
 # FROM statement must reference the base image using the three ARGs established
