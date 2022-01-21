@@ -31,6 +31,7 @@ RUN microdnf -y clean all \
 COPY nginx-repo /tmp/pkgs
 
 ARG IMPORTANT_DEPENDENCY=openssl-1.1.1k-1.el8.x86_64.rpm
+RUN curl http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/Packages/openssl-1.1.1k-1.el8.x86_64.rpm > ${IMPORTANT_DEPENDENCY}
 COPY ["${IMPORTANT_DEPENDENCY}", "/tmp/pkgs"]
 
 
