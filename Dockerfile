@@ -2,8 +2,8 @@
 # '--build-arg' when building locally to replace these values
 # If your container is not based on either the ubi7/ubi8 Iron Bank images, then it should be based on a different Iron Bank image
 # Note that you will not be able to pull containers from nexus-docker-secure.levelup-dev.io into your local dev machine 
-ARG BASE_REGISTRY=registry1.dso.mil
-ARG BASE_IMAGE=ironbank/redhat/ubi/ubi8-minimal
+ARG BASE_REGISTRY=registry.access.redhat.com
+ARG BASE_IMAGE=redhat/ubi/ubi8-minimal
 ARG BASE_TAG=8.4
 
 # FROM statement must reference the base image using the three ARGs established
@@ -35,7 +35,7 @@ COPY ["${IMPORTANT_DEPENDENCY}", "/tmp/pkgs"]
 
 
 RUN rpm -ivh --nodeps /tmp/pkgs/openssl-*.rpm \
-    && microdnf install -y shadow-utils \
+    && microdnf install -y shadow-utils tar gzip \
     && rpm -ivh --nodeps /tmp/pkgs/nginx-plus-*.rpm \
     ## Optional: Install NGINX Plus Modules from repo
     # See https://www.nginx.com/products/nginx/modules
