@@ -30,8 +30,8 @@ RUN microdnf -y clean all \
 # New Line 41 to be added path to the NGINX off-line repo (wget -P /etc/yum.repos.d /nginx-repo/nginx-plus-23-1.el8.ngx.x86_64.rpm && \)
 COPY nginx-repo /tmp/pkgs
 
-ARG IMPORTANT_DEPENDENCY=openssl-1.1.1k-1.el8.x86_64.rpm
-RUN curl http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/Packages/openssl-1.1.1k-1.el8.x86_64.rpm > /tmp/pkgs/${IMPORTANT_DEPENDENCY}
+#ARG IMPORTANT_DEPENDENCY=openssl-1.1.1k-1.el8.x86_64.rpm
+#RUN curl http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/Packages/openssl-1.1.1k-1.el8.x86_64.rpm > /tmp/pkgs/${IMPORTANT_DEPENDENCY}
 #COPY ["${IMPORTANT_DEPENDENCY}", "/tmp/pkgs"]
 
 
