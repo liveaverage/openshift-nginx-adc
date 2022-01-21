@@ -64,8 +64,8 @@ RUN sed -i 's,listen.*80,listen       8080,' /etc/nginx/conf.d/default.conf \
     && chown -R $UID:0 /var/cache/nginx \
     && chmod -R g+w /var/cache/nginx \
     && chown -R $UID:0 /etc/nginx \
-    && chmod -R g+w /etc/nginx
-
+    && chmod -R g+w /etc/nginx \
+    && chmod -R ugo+rwx /usr/share/nginx/html
 
 # Check imported NGINX config and set permissions and ownership
 RUN nginx -t \
