@@ -1,37 +1,5 @@
-# NGINX-Plus-Software-ADC
+# NGINX-ADC
 
-## Software Trial and Registration
-
-This software is made available for you at no cost for 60 days.  After that time you are expected to register this software and work with an NGINX Sales representative for ongoing demo licenses or software and support acquisition.
-
-## Register for a Free Gift, Training and Deployment Guides
-
-Register at:  [NGINX Registration Page](https://carah.io/nginxregistration)
-
-Alternatively contact F5 Federal Sales at:  [nginx-federal@f5.com](nginx-federal@f5.com) 
-
-NGINX Plus Docker image for RHEL 8
-
-## What is NGINX-Plus
-
-NGINX Plus is a software load balancer, web server, and content cache built on top of open source NGINX. NGINX Plus has exclusive enterprise‑grade features beyond what's available in the open source offering, including.
-
-- Session persistence
-- Enterprise class visibility with 90+ additional metrics and live dashboard built-in
-- WAF (OWASP top 10 and/or advanced protection)
-- JWT Authentication (simple integration with okta/ping/etc)
-- Native OpenID Connect support
-- Active health checks on status codeand response body
-- Key value store (dynamic IP black-listing,blue/green deployments)
-- High Availability / Zone Sync across cluster
-- Dynamic reconfiguration—zero downtime
-- Service discovery using DNS
-- Sticky Session persistence based on cookies
-
- The NGINX-Plus platform can be deployed as a Virtual Machine, Container, Bare metal or as a cloud deployment.
-> [wikipedia.org/wiki/Nginx](https://en.wikipedia.org/wiki/Nginx)
-
-![logo](https://raw.githubusercontent.com/docker-library/docs/01c12653951b2fe592c1f93a13b4e289ada0e3a1/nginx/logo.png)
 
 ## File Structure
 
